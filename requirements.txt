@@ -1,16 +1,24 @@
 Django==1.8.4
+Fabric==1.10.2
+GitPython==1.0.1
 Werkzeug==0.10.4
 arrow==0.6.0
 data-importer==2.2.1
 django-activity-stream==0.6.0
 django-extensions==1.5.5
 django-jsonfield==0.9.15
+ecdsa==0.13
+gitdb==0.6.4
 jdcal==1.0
 openpyxl==2.2.5
-
--e git+https://github.com/rosscdh/pinax-eventlog.git@feature/dateoverride#egg=pinax-eventlog
+paramiko==1.15.2
+-e git+https://github.com/rosscdh/pinax-eventlog.git@5897f4770e084881eae5f706fe4d4a0d3029e4b1#egg=pinax_eventlog-origin/feature/dateoverride
+pycrypto==2.6.1
 python-dateutil==2.4.2
 pytz==2015.4
+requests==2.7.0
 six==1.9.0
+smmap==0.9.0
+termcolor==1.1.0
 wsgiref==0.1.2
 xlrd==0.9.4

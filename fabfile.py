@@ -32,7 +32,7 @@ env.celery_app_name = 'current'
 env.disable_known_hosts = True
 env.fixtures = None
 
-env.application_user = env.user = os.environ.get('USER', 'root')
+env.application_user = env.user = os.environ.get('USER', 'ubuntu')
 
 env.SHA1_FILENAME = None
 env.timestamp = time.time()
@@ -62,7 +62,7 @@ env.roledefs.update({
 @task
 def staging():
     from config.environments import staging as config
-    env.application_user = env.user = 'root'
+    env.application_user = env.user = 'ubuntu'
 
     env.hosts = config.HOSTS if not env.hosts else env.hosts
 
@@ -318,7 +318,7 @@ def deploy_archive_file():
     if not files.exists('%s/%s' % (env.deploy_archive_path, file_name)):
         as_sudo = env.environment_class in ['production', 'celery']
         put('/tmp/%s' % file_name, env.deploy_archive_path, use_sudo=as_sudo)
-        env_run('chown %s:%s %s' % (env.application_user, env.application_user, env.deploy_archive_path) )
+        sudo('chown %s:%s %s' % (env.application_user, env.application_user, env.deploy_archive_path) )
 
 
 def clean_zip():
@@ -384,8 +384,8 @@ def update_env_conf():
     if not env.is_predeploy:
         # copy the live local_settings
         with cd(project_path):
-            put(local_path='./config/environments/%s/%s/local_settings.py' % (env.environment_class, 'current'), remote_path='%s%s/%s/local_settings.py' % (env.remote_project_path, 'current', 'current'))  # this is the one to be read
-            set_code_version()
+            put(local_path='./config/environments/%s/%s/local_settings.py' % (env.environment_class, env.project), remote_path='%s%s/%s/local_settings.py' % (env.remote_project_path, 'current', env.project))  # this is the one to be read
+            # set_code_version()
 
 @task
 def set_code_version():
@@ -541,11 +541,11 @@ def chores():
 
     inst('python-setuptools python-dev uwsgi-plugin-python python-psycopg2')
 
-    inst('default-jre default-jre-headless default-jdk')  # java stuff
+    #inst('default-jre default-jre-headless default-jdk')  # java stuff
 
     inst('nginx uwsgi supervisor')  # web servers and related admin
 
-    inst('libgeos-dev')  # geodata
+    #inst('libgeos-dev')  # geodata
 
     sudo('easy_install pip')
     sudo('pip install virtualenv virtualenvwrapper')
@@ -569,9 +569,14 @@ def paths():
     # run('mkdir -p ~/.virtualenvs')
     # run('mkdir -p ~/apps/catmap/versions/tmp')
     # run('ln -s ~/apps/catmap/versions/tmp ~/apps/catmap/current')
-    run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> $HOME/.bash_profile')
-    run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> /home/ubuntu/.bash_profile')
+    # run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> $HOME/.bash_profile')
+    # run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> /home/ubuntu/.bash_profile')
+    pass
 
+@task
+
+def upload_db():
+    put('db.sqlite3', '/home/ubuntu/apps/catmap/')
 #-------
 
 @task

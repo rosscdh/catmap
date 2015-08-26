@@ -2,6 +2,8 @@ users.json
 tickets.json
 zen-resolver.log
 
+*.sqlite3
+config/*
 venv
 .vagrant
 *.db
