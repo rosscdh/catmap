@@ -31,7 +31,4 @@ class Cat(models.Model):
         return self.dob  # - today
 
     def __unicode__(self):
-        return '%s - (%syrs, %s)' % (self.name, self.age, self.sex)
-
-#from actstream.registry import register as actstream_register
-#actstream_register(Cat)
+        return '%s - (%s)' % (self.name, self.sex)
