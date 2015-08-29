@@ -532,7 +532,7 @@ def repos():
 def chores():
     inst = lambda pkglist: sudo('aptitude --assume-yes install %s' % pkglist)
 
-    sudo("aptitude update")
+    #sudo("aptitude update")
 
     inst('libffi-dev ntp nmap htop vim unzip gettext')  # system level utilities. need ntp to keep clocks in sync, eh
     inst('git mercurial subversion ')  # version control
@@ -561,20 +561,15 @@ def add_user():
 
 @task
 def paths():
-    # put('conf/.bash_profile', '~/.bash_profile')
-    # run('cat ~/.bash_profile')
-    # run('echo $WORKON_HOME')
-    # run('echo "WORKON_HOME=$HOME/.virtualenvs" >> $HOME/.bash_profile')
-    # run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> $HOME/.bash_profile')
-    # run('mkdir -p ~/.virtualenvs')
-    # run('mkdir -p ~/apps/catmap/versions/tmp')
-    # run('ln -s ~/apps/catmap/versions/tmp ~/apps/catmap/current')
-    # run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> $HOME/.bash_profile')
-    # run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> /home/ubuntu/.bash_profile')
-    pass
+    run('echo "WORKON_HOME=$HOME/.virtualenvs" >> $HOME/.bash_profile')
+    run('echo "source /usr/local/bin/virtualenvwrapper.sh" >> $HOME/.bash_profile')
+    run('echo "source $HOME/.bash_profile" >> $HOME/.bashrc')
+    run('mkdir -p ~/.virtualenvs')
+    run('mkdir -p ~/apps/catmap/versions/tmp')
+    run('ln -s ~/apps/catmap/versions/tmp ~/apps/catmap/current')
+    # pass
 
 @task
-
 def upload_db():
     put('db.sqlite3', '/home/ubuntu/apps/catmap/')
 #-------
@@ -593,7 +588,7 @@ def deploy(is_predeploy='False',full='False',db='False',search='False'):
     prepare_deploy()
 
     do_deploy()
-    paths()
+    #paths()
     put_confs()
 
     requirements()

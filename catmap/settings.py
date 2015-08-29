@@ -42,11 +42,17 @@ DJANGO_APPS = (
 APPLICATION_APPS = (
     'catmap.apps.cat',
     'catmap.apps.shelter',
+    'catmap.apps.dashboard',
 )
 
 HELPER_APPS = (
+    'pipeline',
+    'corsheaders',
+    'djangobower',
+    'crispy_forms',
     'pinax.eventlog',
     'django_extensions',
+    'rest_framework',
 )
 
 
@@ -54,6 +60,7 @@ INSTALLED_APPS = DJANGO_APPS + HELPER_APPS + APPLICATION_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -61,6 +68,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'pipeline.middleware.MinifyHTMLMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
 )
 
 ROOT_URLCONF = 'catmap.urls'
@@ -68,7 +77,7 @@ ROOT_URLCONF = 'catmap.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -113,6 +122,83 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+    'pipeline.finders.PipelineFinder',
+)
+
+BOWER_COMPONENTS_ROOT = BASE_DIR
+
+STATICFILES_DIRS = (
+    BOWER_COMPONENTS_ROOT,
+)
+
+BOWER_INSTALLED_APPS = (
+    'angularjs',
+    'angular-osm',
+    'angular-chart.js',
+    'angular-resource',
+    'angular-ui-router',
+    'angular-moment',
+    'moment',
+    'angular-loading-bar',
+    'angular-rangeslider',
+    'angular-daterangepicker',
+)
+
+PIPELINE_JS = {
+    'dashboard': {
+        'source_filenames': (
+            # angular
+            'angular/angular.js',
+            'angular-ui-router/release/angular-ui-router.js',
+            'angular-resource/angular-resource.js',
+            # moment timestamps
+            'moment/moment.js',
+            'angular-moment/angular-moment.js',
+            # loading bar
+            'angular-loading-bar/build/loading-bar.js',
+            # range slider
+            'angular-rangeslider/angular.rangeSlider.js',
+            # daterange picker
+            'angular-daterangepicker/js/angular-daterangepicker.js',
+            # charts
+            'Chart.js/Chart.js',
+            'angular-chart.js/dist/angular-chart.js',
+            # osm
+            'angular-osm/dist/osm.js',
+            'angular-base64/angular-base64.js'
+            'ngstorage/ngStorage.js.js'
+            'osmtogeojson/osmtogeojson.js',
+            # The dashboard app
+            'js/dashboard.app.js',
+        ),
+        'output_filename': 'js/dashboard.js',
+    },
+}
+
+PIPELINE_CSS = {
+    'dashboard': {
+        'source_filenames': (
+            'angular-chart.js/dist/angular-chart.css',
+            # loading bar
+            'angular-loading-bar/build/loading-bar.css',
+            # range slider
+            'angular-rangeslider/angular.rangeSlider.css',
+        ),
+        'output_filename': 'css/dashboard.css',
+    },
+}
+
+PIPELINE_COMPILERS = (
+    'pipeline.compilers.less.LessCompiler',
+    'pipeline.compilers.sass.SASSCompiler',
+)
 
 try:
     from .local_settings import *

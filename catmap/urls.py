@@ -16,6 +16,11 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+admin.site.site_header = 'CatMap - Feline lifetime review'
+admin.site.site_title = admin.site.site_header
+admin.site.index_title = admin.site.site_header
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('catmap.apps.dashboard.urls', namespace='dashboard')),
 ]
