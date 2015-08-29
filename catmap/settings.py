@@ -149,11 +149,15 @@ BOWER_INSTALLED_APPS = (
     'angular-loading-bar',
     'angular-rangeslider',
     'angular-daterangepicker',
+    'bootstrap-daterangepicker',
 )
 
 PIPELINE_JS = {
     'dashboard': {
         'source_filenames': (
+            # support
+            'jquery/dist/jquery.js',
+            'bootstrap/dist/js/bootstrap.js',
             # angular
             'angular/angular.js',
             'angular-ui-router/release/angular-ui-router.js',
@@ -164,8 +168,9 @@ PIPELINE_JS = {
             # loading bar
             'angular-loading-bar/build/loading-bar.js',
             # range slider
-            'angular-rangeslider/angular.rangeSlider.js',
+            #'angular-rangeslider/angular.rangeSlider.js',
             # daterange picker
+            'bootstrap-daterangepicker/daterangepicker.js',
             'angular-daterangepicker/js/angular-daterangepicker.js',
             # charts
             'Chart.js/Chart.js',
@@ -185,11 +190,14 @@ PIPELINE_JS = {
 PIPELINE_CSS = {
     'dashboard': {
         'source_filenames': (
+            'bootstrap/dist/css/bootstrap.css',
+            # chart
             'angular-chart.js/dist/angular-chart.css',
             # loading bar
             'angular-loading-bar/build/loading-bar.css',
             # range slider
-            'angular-rangeslider/angular.rangeSlider.css',
+            #'angular-rangeslider/angular.rangeSlider.css',
+            'bootstrap-daterangepicker/daterangepicker.css',
         ),
         'output_filename': 'css/dashboard.css',
     },

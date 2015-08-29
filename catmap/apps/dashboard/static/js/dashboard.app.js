@@ -3,7 +3,10 @@ var app = angular.module('DashboardApp', [
     'ngResource',
     'angularMoment',
     'angular-loading-bar',
+    'daterangepicker',
+    'chart.js',
 ])
+
 
 app.config(function ($stateProvider, $urlRouterProvider) {
     // For any unmatched url, send to /route1
@@ -16,34 +19,94 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         })
 })
 
-app.controller("DashboardController", ['$scope', '$q',
-    function ($scope, $q) {
 
-        $scope.date = new Date();
+app.controller("DashboardController", [
+    '$scope',
+    '$q',
+    'DashboardService',
+    function ($scope, $q, DashboardService) {
 
-  $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-  $scope.series = ['Series A', 'Series B'];
-  $scope.data = [
-    [65, 59, 80, 81, 56, 55, 40],
-    [28, 48, 40, 19, 86, 27, 90]
-  ];
-  $scope.onClick = function (points, evt) {
-    console.log(points, evt);
-  };
+        $scope.datepicker_date = new Date();
+        $scope.date_from = new Date();
+        $scope.date_to = new Date();
 
-    }])// end controller
+  $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales", "Tele Sales", "Corporate Sales"];
+  $scope.data = [300, 500, 100, 40, 120];
+
+        var init = function () {
+            DashboardService.initial().then(function success (data) {
+                console.log(data);
+                $scope.initial = data;
+
+                $scope.date_from = data.min_date;
+                $scope.date_to = data.max_date;
+                $scope.datepicker_date = {'startDate': $scope.date_from, 'endDate': $scope.date_to};
+
+                DashboardService.query($scope.date, $scope.date).then(function success (data) {
+                    $scope.data = data;
+                });
+            });
+            //$scope.data = DashboardService.query($scope.date, $scope.date);
+        };
+
+        init(); // initialize
+    }
+])// end controller
+
 
 app.factory('DashboardService', [
     '$q',
     '$log',
     '$resource',
-    '$rootScope',
-function($q, $log, $resource) {
+    function($q, $log, $resource) {
 
         function dashboardAPI() {
-          return $resource(
-            '/api/v1/dashboard', {}, {}
-          );
+            return $resource('/api/v1/dashboard/', {}, {
+                'initial': {
+                    'url': '/api/v1/dashboard/initial',
+                    'cache': false,
+                    'isArray': false
+                },
+                'query': {
+                    'cache': true,
+                    'isArray': false
+                },
+            });
         };
 
-}]);
+        return {
+            initial: function () {
+                var deferred = $q.defer();
+                var api = dashboardAPI();
+                var data = {};
+                api.initial({},
+                    function success(response) {
+                        data = response.toJSON();
+                        deferred.resolve(data);
+                    },
+                    function error(err) {
+                        data.results = [];
+                        deferred.reject(err);
+                    }
+                );
+                return deferred.promise;
+            },
+            query: function (date_from, date_to) {
+                var deferred = $q.defer();
+                var api = dashboardAPI();
+                var data = {};
+                api.query({'date_from': date_from, 'date_to': date_to},
+                    function success(response) {
+                        data = response.toJSON();
+                        deferred.resolve(data);
+                    },
+                    function error(err) {
+                        data.results = [];
+                        deferred.reject(err);
+                    }
+                );
+                return deferred.promise;
+            }
+        };// end signleton return
+    }
+]); // end service

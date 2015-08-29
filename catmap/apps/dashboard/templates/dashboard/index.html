@@ -2,7 +2,6 @@
 {% load i18n admin_static pipeline %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/css/bootstrap.min.css" />
 {% stylesheet 'dashboard' %}
 {% endblock %}
 
@@ -18,17 +17,14 @@
 
 <!-- Content -->
   <div class="col-md-7">
-contetnt?
-<canvas id="line" class="chart chart-line" data="data"
-  labels="labels" legend="true" series="series"
-  click="onClick">
-</canvas>
+
+<canvas id="polar-area" class="chart chart-polar-area" data="data" labels="labels"></canvas>
 
   </div>
 
   <!-- Filters -->
   <div class="col-md-5">
-    <input date-range-picker class="form-control date-picker" type="text" ng-model="date" />
+    <input date-range-picker class="form-control date-picker" type="text" ng-model="datepicker_date" />
   </div>
 
 </div>
@@ -39,6 +35,4 @@ contetnt?
 
 {% block footer %}
   {% javascript 'dashboard' %}
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 {% endblock %}

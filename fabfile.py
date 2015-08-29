@@ -427,7 +427,9 @@ def fixtures():
 @task
 def assets():
     # collect static components
-    virtualenv('python %s%s/manage.py collectstatic --noinput' % (env.remote_project_path, 'current',))
+    local('python ./manage.py collectstatic --noinput')
+    #put('./static/*', '/home/ubuntu/apps/catmap/static/')
+    rsync_project(local_dir=source_path, remote_dir=target_path, exclude='.git')
 
 @task
 def requirements():
