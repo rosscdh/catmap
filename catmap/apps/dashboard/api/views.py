@@ -45,17 +45,20 @@ def _yield_cat_ids(**filters):
 class DashboardApiView(ReadOnlyCacheResponseAndETAGMixin, GenericAPIView):
     def distinct_log_actions(self, **filters):
         cursor = connection.cursor()
-
+        # get a full set of month names and year in the range
         months = [dt.strftime('%B, %Y') for dt in rrule(MONTHLY, dtstart=filters.get('timestamp__gte'), until=filters.get('timestamp__lte'))]
-        action_names = OrderedDict((a, 0) for a in [action[0] for action in cursor.execute("select distinct action from eventlog_log").fetchall()])
+        # get distinct action names
+        action_names = OrderedDict((a.lower(), 0) for a in [action[0] for action in cursor.execute("select distinct action from eventlog_log").fetchall()])
+        # add the disctinct set of actions to each month
         actions = OrderedDict((m, None) for m in months)
         for m in months:
             actions[m] = action_names.copy()
 
         for l in Log.objects.filter(**filters).values('action', 'timestamp'):
-            month = l.get('timestamp').strftime('%B, %Y')
-            action = actions[month].get(l.get('action'), 0)
-            actions[month][l.get('action')] = action + 1
+            action_type = l.get('action').lower()
+            month = l.get('timestamp').strftime('%B, %Y')  # convert to month, year for lookup
+            current_action_count = actions[month][action_type]  # has default set above in ordered dict creation
+            actions[month][action_type] += 1 # increment the counter
 
         return actions
 
