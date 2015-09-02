@@ -25,15 +25,24 @@ app.controller("DashboardController", [
     '$scope',
     '$q',
     '$filter',
+    '$location',
     'DashboardService',
-    function ($scope, $q, $filter, DashboardService) {
+    function ($scope, $q, $filter, $location, DashboardService) {
 
         $scope.full_cat_list = [];
         $scope.cat_list = [];
 
         $('.date-picker').on('apply.daterangepicker', function(ev, picker) {
-            query_data(picker.startDate.format('YYYY-MM-DD'), picker.endDate.format('YYYY-MM-DD'));
+            if (picker.startDate.format('YYYY-MM-DD') != $location.search().date_from || picker.endDate.format('YYYY-MM-DD') != $location.search().date_to) {
+                $location.search('date_from', picker.startDate.format('YYYY-MM-DD'));
+                $location.search('date_to', picker.endDate.format('YYYY-MM-DD'));
+            }
         });
+
+        // watch for GET changes
+        $scope.$watch(function(){ return $location.search() }, function(){
+          query_data($location.search().date_from, $location.search().date_to);
+        }, true);
 
         var query_data = function (date_from, date_to) {
             DashboardService.query(date_from, date_to).then(function success (data) {
