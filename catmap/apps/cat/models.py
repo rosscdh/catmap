@@ -1,12 +1,21 @@
+# -*- coding: utf-8 -*-
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+
+from pinax.eventlog.models import Log
+
+from . import CAT_GENDER_CHOICES
+from .managers import CatManager
+
+from datetime import date
 
 
 class Cat(models.Model):
-    CAT_GENDER = (('m', 'M'), ('f', 'F'))
+    CAT_GENDER = CAT_GENDER_CHOICES
 
     name = models.CharField(max_length=128, null=True, blank=True)
     dob = models.DateField(null=True, blank=True)
-    sex = models.CharField(max_length=3, choices=CAT_GENDER, null=True, blank=True)
+    sex = models.CharField(max_length=3, choices=CAT_GENDER.get_choices(), null=True, blank=True)
     breed = models.CharField(max_length=128, null=True, blank=True)
     coat_type = models.CharField(max_length=128, null=True, blank=True)
     colour = models.CharField(max_length=128, null=True, blank=True)
@@ -26,9 +35,30 @@ class Cat(models.Model):
     current_status = models.CharField(max_length=128, null=True, blank=True)
     owner = models.ForeignKey('auth.User', null=True, blank=True)
 
+    objects = CatManager()
+
+    @property
+    def gender(self):
+        return self.CAT_GENDER.get_desc_by_value(self.sex)
+
     @property
     def age(self):
-        return self.dob  # - today
+        today = date.today()
+        try:
+            birthday = self.dob.replace(year=today.year)
+        except ValueError:
+            # raised when birth date is February 29 and the current year is not a leap year
+            birthday = self.dob.replace(year=today.year, month=self.dob.month + 1, day=1)
+        if birthday > today:
+            return today.year - self.dob.year - 1
+        else:
+            return today.year - self.dob.year
+
+    @property
+    def events(self):
+        return Log.objects.filter(content_type=ContentType.objects.get(app_label='cat', model='cat')) \
+                          .filter(object_id=self.pk) \
+                          .order_by('timestamp')
 
     def __unicode__(self):
         return '%s - (%s)' % (self.name, self.sex)

@@ -146,6 +146,7 @@ BOWER_INSTALLED_APPS = (
     'angular-ui-router',
     'angular-moment',
     'moment',
+    'angular-smart-table',
     'angular-loading-bar',
     'angular-rangeslider',
     'angular-daterangepicker',
@@ -172,6 +173,8 @@ PIPELINE_JS = {
             # daterange picker
             'bootstrap-daterangepicker/daterangepicker.js',
             'angular-daterangepicker/js/angular-daterangepicker.js',
+            # table
+            'angular-smart-table/dist/smart-table.js',
             # charts
             'Chart.js/Chart.js',
             'angular-chart.js/dist/angular-chart.js',

@@ -12,22 +12,118 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}{% verbatim %}
+<style>
+#loading-bar .bar {
+  background: #c00;
+}
+</style>
 <div id="" class="row" ng-app="DashboardApp">
-<div ng-controller="DashboardController">
+    <div ng-controller="DashboardController">
 
-<!-- Content -->
-  <div class="col-md-7">
+      <!-- Filters -->
+      <div class="col-md-5">
+        <input date-range-picker class="form-control date-picker" type="text" ng-model="datepicker_date" />
+      </div><!-- END Filters -->
 
-<canvas id="polar-area" class="chart chart-polar-area" data="data" labels="labels"></canvas>
+      <!-- Content -->
+      <div class="col-md-7">
 
-  </div>
+        <div class="col-md-6 panel panel-default">
+          <div class="panel-heading">Gender</div>
+          <div class="panel-body">
+            <canvas id="pie" class="chart chart-pie" data="gender_data.data" labels="gender_data.labels"></canvas>
+            <table class="table table-striped">
+              <tr>
+                <th ng-repeat="label in gender_data.labels track by $index">{{ label }}</th>
+              </tr>
+              <tr>
+                <td ng-repeat="value in gender_data.data track by $index">{{ value }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
 
-  <!-- Filters -->
-  <div class="col-md-5">
-    <input date-range-picker class="form-control date-picker" type="text" ng-model="datepicker_date" />
-  </div>
+        <div class="col-md-6 panel panel-default">
+          <div class="panel-heading">Gender - Desexed</div>
+          <div class="panel-body">
+            <canvas id="pie" class="chart chart-pie" data="desexedgender_data.data" labels="desexedgender_data.labels"></canvas>
+            <table class="table table-striped">
+              <tr>
+                <th ng-repeat="label in desexedgender_data.labels track by $index">{{ label }}</th>
+              </tr>
+              <tr>
+                <td ng-repeat="value in desexedgender_data.data track by $index">{{ value }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
 
-</div>
+      </div><!-- END Content -->
+
+
+      <!-- List of Cats -->
+      <table st-table="cat_list" st-safe-src="full_cat_list" class="col-md-12 table-responsive table-striped">
+        <thead>
+        <tr>
+          <th st-sort="pk">Id</th>
+          <th st-sort="name" st-sort-default="true">Name</th>
+          <th st-sort="dob">Age (dob)</th>
+          <th st-sort="sex">Sex</th>
+          <th st-sort="current_status">Current status</th>
+          <th st-sort="breed">Breed</th>
+          <th st-sort="altered">Altered</th>
+          <th st-sort="desex_done">Desexed</th>
+          <th st-sort="shire">Shire</th>
+          <th st-sort="tattoo">Tattoo</th>
+          <th st-sort="microchip_id">Microchip id</th>
+          <th st-sort="receipt_id">Receipt_id</th>
+          <th>Recent Events</th>
+        </tr>
+        <tr>
+          <th colspan="14">
+            <input st-search placeholder="Search" class="input-sm form-control" type="search"/>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <th colspan="14">
+            <b>No. Results:</b> <em>{{ cat_list.length }}</em>
+          </th>
+        </tr>
+        <tr ng-repeat="item in cat_list track by $index">
+          <td>{{ item.pk }}</td>
+          <td class="col-md-2">
+            {{ item.name }}
+            <br/>
+            {{ item.colour }}
+            <br/>
+            {{ item.animal_notes }}
+          </td>
+          <td>{{ item.age }}yrs <small>({{ item.dob | date }})</small></td>
+          <td>{{ item.gender }}</td>
+          <td>{{ item.current_status }}</td>
+          <td>{{ item.breed }}</td>
+          <td>{{ item.altered }}</td>
+          <td>{{ item.desex_done }}</td>
+          <td>{{ item.shire }}</td>
+          <td>{{ item.tattoo }}</td>
+          <td>{{ item.microchip_id }}</td>
+          <td>{{ item.receipt_id }}</td>
+          <td class="col-md-3"><span class="event-log" data-events="item.events"></span></td>
+        </tr>
+        </tbody>
+<!--         <tfoot>
+          <tr>
+            <td colspan="5" class="text-center">
+              <div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+            </td>
+          </tr>
+        </tfoot> -->
+      </table>
+      <!-- END List of Cats -->
+
+    </div>
 </div>
 {% endverbatim %}{% endblock %}
 

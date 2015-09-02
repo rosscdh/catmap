@@ -4,6 +4,7 @@ var app = angular.module('DashboardApp', [
     'angularMoment',
     'angular-loading-bar',
     'daterangepicker',
+    'smart-table',
     'chart.js',
 ])
 
@@ -23,36 +24,62 @@ app.config(function ($stateProvider, $urlRouterProvider) {
 app.controller("DashboardController", [
     '$scope',
     '$q',
+    '$filter',
     'DashboardService',
-    function ($scope, $q, DashboardService) {
+    function ($scope, $q, $filter, DashboardService) {
 
-        $scope.datepicker_date = new Date();
-        $scope.date_from = new Date();
-        $scope.date_to = new Date();
+        $scope.full_cat_list = [];
+        $scope.cat_list = [];
 
-  $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales", "Tele Sales", "Corporate Sales"];
-  $scope.data = [300, 500, 100, 40, 120];
+        $('.date-picker').on('apply.daterangepicker', function(ev, picker) {
+            query_data(picker.startDate.format('YYYY-MM-DD'), picker.endDate.format('YYYY-MM-DD'));
+        });
+
+        var query_data = function (date_from, date_to) {
+            DashboardService.query(date_from, date_to).then(function success (data) {
+                //$scope.data = data;
+                $scope.gender_data = {
+                    'labels': ['Male', 'Female', 'Unspecified'],
+                    'data': [data.gender.male, data.gender.female, data.gender.unspecified],
+                }
+                $scope.desexedgender_data = {
+                    'labels': ['Male', 'Female', 'Unspecified'],
+                    'data': [data.gender.desexed.male, data.gender.desexed.female, data.gender.desexed.unspecified],
+                }
+                angular.copy(data.cats, $scope.full_cat_list)
+                angular.copy(data.cats, $scope.cat_list)
+            });
+        };
 
         var init = function () {
             DashboardService.initial().then(function success (data) {
-                console.log(data);
-                $scope.initial = data;
-
-                $scope.date_from = data.min_date;
-                $scope.date_to = data.max_date;
-                $scope.datepicker_date = {'startDate': $scope.date_from, 'endDate': $scope.date_to};
-
-                DashboardService.query($scope.date, $scope.date).then(function success (data) {
-                    $scope.data = data;
-                });
+                $scope.date_from = moment(data.min_date);
+                $scope.date_to = moment(data.max_date);
+                $scope.datepicker_date = {
+                    'locale': {
+                        'format': 'YYYY-MM-DD'
+                    },
+                    'startDate': $scope.date_from,
+                    'endDate': $scope.date_to
+                };
             });
-            //$scope.data = DashboardService.query($scope.date, $scope.date);
+
         };
 
         init(); // initialize
     }
 ])// end controller
 
+app.directive('eventLog', function() {
+  return {
+    restrict: 'C',
+    scope: {
+      events: '=events'
+    },
+    //template: '<ol><li ng-repeat="event in events track by $index"><em>{{ event.status }}</em><br/>{{ event.source }}, {{ event.lost_found_address }}<br/><small>{{ event.date_of | date }}</small></li></ol>'
+    template: '<div ng-repeat="event in events track by $index" class="list-group"><a href="#" class="list-group-item"><b class="list-group-item-heading">{{ event.status }}</b><p class="list-group-item-text">{{ event.source }}, {{ event.lost_found_address }}<br/><small>{{ event.date_of | date }}</small></p></a></div>'
+  };
+});
 
 app.factory('DashboardService', [
     '$q',
@@ -68,7 +95,7 @@ app.factory('DashboardService', [
                     'isArray': false
                 },
                 'query': {
-                    'cache': true,
+                    'cache': false,
                     'isArray': false
                 },
             });
@@ -95,6 +122,7 @@ app.factory('DashboardService', [
                 var deferred = $q.defer();
                 var api = dashboardAPI();
                 var data = {};
+                //console.log({'date_from': date_from, 'date_to': date_to})
                 api.query({'date_from': date_from, 'date_to': date_to},
                     function success(response) {
                         data = response.toJSON();
