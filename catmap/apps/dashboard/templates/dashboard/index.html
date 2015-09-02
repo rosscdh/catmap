@@ -62,7 +62,7 @@
 
 
       <!-- List of Cats -->
-      <table st-table="cat_list" st-safe-src="full_cat_list" class="col-md-12 table-responsive table-striped">
+      <table st-table="cat_list" st-safe-src="full_cat_list" class="col-md-12 table-responsive table-bordered table-striped">
         <thead>
         <tr>
           <th st-sort="pk">Id</th>
@@ -74,42 +74,37 @@
           <th st-sort="altered">Altered</th>
           <th st-sort="desex_done">Desexed</th>
           <th st-sort="shire">Shire</th>
-          <th st-sort="tattoo">Tattoo</th>
-          <th st-sort="microchip_id">Microchip id</th>
-          <th st-sort="receipt_id">Receipt_id</th>
           <th>Recent Events</th>
         </tr>
         <tr>
-          <th colspan="14">
+          <th colspan="11">
             <input st-search placeholder="Search" class="input-sm form-control" type="search"/>
           </th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <th colspan="14">
+          <th colspan="11">
             <b>No. Results:</b> <em>{{ cat_list.length }}</em>
           </th>
         </tr>
         <tr ng-repeat="item in cat_list track by $index">
           <td>{{ item.pk }}</td>
-          <td class="col-md-2">
-            {{ item.name }}
-            <br/>
-            {{ item.colour }}
-            <br/>
-            {{ item.animal_notes }}
+          <td class="col-md-3">
+            <b>{{ item.name }}</b><br/>
+            <em>{{ item.colour }}</em>
+            <span ng-show="item.tattoo"><br/><b>tattoo:</b> {{ item.tattoo }}</span>
+            <span ng-show="item.microchip_id"><br/><b>microchip id:</b> {{ item.microchip_id }}</span>
+            <span ng-show="item.receipt_id"><br/><b>receipt id:</b> {{ item.receipt_id }}</span>
+            <p ng-show="item.animal_notes">{{ item.animal_notes }}</p>
           </td>
-          <td>{{ item.age }}yrs <small>({{ item.dob | date }})</small></td>
+          <td>{{ item.age }}yrs<br/><small>({{ item.dob | date }})</small></td>
           <td>{{ item.gender }}</td>
           <td>{{ item.current_status }}</td>
           <td>{{ item.breed }}</td>
           <td>{{ item.altered }}</td>
           <td>{{ item.desex_done }}</td>
           <td>{{ item.shire }}</td>
-          <td>{{ item.tattoo }}</td>
-          <td>{{ item.microchip_id }}</td>
-          <td>{{ item.receipt_id }}</td>
           <td class="col-md-3"><span class="event-log" data-events="item.events"></span></td>
         </tr>
         </tbody>
