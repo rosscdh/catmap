@@ -57,6 +57,28 @@ app.controller("DashboardController", [
                 }
                 angular.copy(data.cats, $scope.full_cat_list)
                 angular.copy(data.cats, $scope.cat_list)
+
+                $scope.actions = {
+                    'labels': Object.keys(data.actions),
+                    'series': Object.keys(data.actions[Object.keys(data.actions)[0]]),
+                    'data': [],
+                };
+// $scope.actions = {
+//     'labels': ["January", "February", "March", "April", "May", "June", "July"],
+//     'series': ['Series A', 'Series B'],
+//     'data': [
+// [65, 59, 80, 81, 56, 55, 40],
+// [28, 48, 40, 19, 86, 27, 90]
+// ],
+// };
+                angular.forEach($scope.actions.labels, function(label, index) {
+                    //$scope.actions.data.push(Object.keys(data.actions[label]));
+                    var row = [];
+                    angular.forEach(data.actions[label], function (value, key) {
+                        row.push(value);
+                    });
+                    $scope.actions.data.push(row);
+                });
             });
         };
 

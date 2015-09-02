@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.db import connection
 from django.db.models import Min, Max
 from django.contrib.contenttypes.models import ContentType
 
@@ -15,6 +16,10 @@ from catmap.apps.cat.models import Cat
 from catmap.apps.cat.api.serializers import CatSerializer
 
 from .serializers import DashboardDateRangeSerializer
+
+import datetime
+from collections import OrderedDict
+from dateutil.rrule import rrule, MONTHLY
 
 
 class DashboardInitialApiView(ReadOnlyCacheResponseAndETAGMixin, GenericAPIView):
@@ -38,11 +43,29 @@ def _yield_cat_ids(**filters):
 
 
 class DashboardApiView(ReadOnlyCacheResponseAndETAGMixin, GenericAPIView):
+    def distinct_log_actions(self, **filters):
+        cursor = connection.cursor()
+
+        months = [dt.strftime('%B, %Y') for dt in rrule(MONTHLY, dtstart=filters.get('timestamp__gte'), until=filters.get('timestamp__lte'))]
+        action_names = OrderedDict((a, 0) for a in [action[0] for action in cursor.execute("select distinct action from eventlog_log").fetchall()])
+        actions = OrderedDict((m, None) for m in months)
+        for m in months:
+            actions[m] = action_names.copy()
+
+        for l in Log.objects.filter(**filters).values('action', 'timestamp'):
+            month = l.get('timestamp').strftime('%B, %Y')
+            action = actions[month].get(l.get('action'), 0)
+            actions[month][l.get('action')] = action + 1
+
+        return actions
+
     def get(self, request, *args, **kwargs):
         date_serializer = DashboardDateRangeSerializer(data=request.GET)
+
         if date_serializer.is_valid() is False:
             data = date_serializer.errors
             status_code = http_status.HTTP_400_BAD_REQUEST
+
         else:
             filters = {
                 'timestamp__gte': date_serializer.validated_data.get('date_from'),
@@ -52,6 +75,7 @@ class DashboardApiView(ReadOnlyCacheResponseAndETAGMixin, GenericAPIView):
             data = {
                 'gender': Cat.objects.gender_breakdown(cat_ids=_yield_cat_ids(**filters)),
                 'cats': CatSerializer(Cat.objects.filter(pk__in=_yield_cat_ids(**filters)), many=True).data,
+                'actions': self.distinct_log_actions(**filters),
             }
             status_code = http_status.HTTP_200_OK
         return Response(data, status=status_code)

@@ -21,43 +21,58 @@
     <div ng-controller="DashboardController">
 
       <!-- Filters -->
-      <div class="col-md-5">
-        <input date-range-picker class="form-control date-picker" type="text" ng-model="datepicker_date" />
+      <div class="row">
+        <div class="col-md-5">
+          <input date-range-picker class="form-control date-picker" type="text" ng-model="datepicker_date" />
+        </div>
       </div><!-- END Filters -->
 
       <!-- Content -->
-      <div class="col-md-7">
+      <div class="row">
+          <div class="col-md-12 panel panel-default">
+            <canvas id="line" class="chart chart-line"
+                    chart-data="actions.data"
+                    chart-labels="actions.labels"
+                    chart-series="actions.series"
+                    chart-legend="true"
+                    chart-click="onClick" >
+            </canvas>
+        </div>
+      </div>
 
-        <div class="col-md-6 panel panel-default">
-          <div class="panel-heading">Gender</div>
-          <div class="panel-body">
-            <canvas id="pie" class="chart chart-pie" data="gender_data.data" labels="gender_data.labels"></canvas>
-            <table class="table table-striped">
-              <tr>
-                <th ng-repeat="label in gender_data.labels track by $index">{{ label }}</th>
-              </tr>
-              <tr>
-                <td ng-repeat="value in gender_data.data track by $index">{{ value }}</td>
-              </tr>
-            </table>
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="col-md-6 panel panel-default">
+            <div class="panel-heading">Gender</div>
+            <div class="panel-body">
+              <canvas id="pie" class="chart chart-pie" data="gender_data.data" labels="gender_data.labels"></canvas>
+              <table class="table table-striped">
+                <tr>
+                  <th ng-repeat="label in gender_data.labels track by $index">{{ label }}</th>
+                </tr>
+                <tr>
+                  <td ng-repeat="value in gender_data.data track by $index">{{ value }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="col-md-6 panel panel-default">
+            <div class="panel-heading">Gender - Desexed</div>
+            <div class="panel-body">
+              <canvas id="pie" class="chart chart-pie" data="desexedgender_data.data" labels="desexedgender_data.labels"></canvas>
+              <table class="table table-striped">
+                <tr>
+                  <th ng-repeat="label in desexedgender_data.labels track by $index">{{ label }}</th>
+                </tr>
+                <tr>
+                  <td ng-repeat="value in desexedgender_data.data track by $index">{{ value }}</td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
-
-        <div class="col-md-6 panel panel-default">
-          <div class="panel-heading">Gender - Desexed</div>
-          <div class="panel-body">
-            <canvas id="pie" class="chart chart-pie" data="desexedgender_data.data" labels="desexedgender_data.labels"></canvas>
-            <table class="table table-striped">
-              <tr>
-                <th ng-repeat="label in desexedgender_data.labels track by $index">{{ label }}</th>
-              </tr>
-              <tr>
-                <td ng-repeat="value in desexedgender_data.data track by $index">{{ value }}</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
       </div><!-- END Content -->
 
 
