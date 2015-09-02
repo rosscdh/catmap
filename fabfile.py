@@ -426,10 +426,12 @@ def fixtures():
 
 @task
 def assets():
+    local('rm -Rf ./static')
     # collect static components
     local('python ./manage.py collectstatic --noinput')
     #put('./static/*', '/home/ubuntu/apps/catmap/static/')
-    rsync_project(local_dir=source_path, remote_dir=target_path, exclude='.git')
+    local('tar cvzf static.tar.gz ./static')
+    #rsync_project(local_dir=source_path, remote_dir=target_path, exclude='.git')
 
 @task
 def requirements():

@@ -24,6 +24,7 @@ SECRET_KEY = '9!ceu3zg_jrqqkccn+ilfd!t^kfjsk-hg#!a+ii^ue-oi$+gd8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -132,11 +133,13 @@ STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
 )
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
+
 BOWER_COMPONENTS_ROOT = BASE_DIR
 
-STATICFILES_DIRS = (
-    BOWER_COMPONENTS_ROOT,
-)
+# STATICFILES_DIRS = (
+#     BOWER_COMPONENTS_ROOT,
+# )
 
 BOWER_INSTALLED_APPS = (
     'angularjs',
@@ -210,6 +213,21 @@ PIPELINE_COMPILERS = (
     'pipeline.compilers.less.LessCompiler',
     'pipeline.compilers.sass.SASSCompiler',
 )
+
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.jsmin.JSMinCompressor'
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.csstidy.CSSMinCompressor'
+
+DJANGO_ENV = os.getenv('DJANGO_ENV', os.getenv('RAILS_ENV', 'development'))
+
+#
+# Load the environment specific settings
+#
+try:
+    env_path = os.path.join(BASE_DIR, 'config/environments/{DJANGO_ENV}/catmap/local_settings.py'.format(DJANGO_ENV=DJANGO_ENV))
+    environment_settings = open(env_path)
+    exec(environment_settings)
+except Exception as e:
+    pass
 
 try:
     from .local_settings import *

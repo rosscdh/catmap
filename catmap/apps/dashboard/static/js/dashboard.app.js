@@ -72,6 +72,7 @@ app.controller("DashboardController", [
                     });
                     $scope.actions.data.push(row);
                 });
+                console.log($scope.actions.data)
             });
         };
 

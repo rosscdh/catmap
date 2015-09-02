@@ -57,8 +57,11 @@ class DashboardApiView(ReadOnlyCacheResponseAndETAGMixin, GenericAPIView):
         for l in Log.objects.filter(**filters).values('action', 'timestamp'):
             action_type = l.get('action').lower()
             month = l.get('timestamp').strftime('%B, %Y')  # convert to month, year for lookup
-            current_action_count = actions[month][action_type]  # has default set above in ordered dict creation
-            actions[month][action_type] += 1 # increment the counter
+            try:
+                current_action_count = actions[month][action_type]  # has default set above in ordered dict creation
+                actions[month][action_type] += 1 # increment the counter
+            except KeyError:
+                break
 
         return actions
 
