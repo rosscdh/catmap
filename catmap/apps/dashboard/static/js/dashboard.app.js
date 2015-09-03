@@ -64,15 +64,15 @@ app.controller("DashboardController", [
                     'series': Object.keys(data.actions[Object.keys(data.actions)[0]]),
                     'data': [],
                 };
-                angular.forEach($scope.actions.labels, function(label, index) {
-                    //$scope.actions.data.push(Object.keys(data.actions[label]));
+                angular.forEach($scope.actions.series, function(series, index) {
                     var row = [];
-                    angular.forEach(data.actions[label], function (value, key) {
-                        row.push(value);
+                    angular.forEach($scope.actions.labels, function (label, key) {
+                        row.push(data.actions[label][series]);
                     });
                     $scope.actions.data.push(row);
                 });
-                console.log($scope.actions.data)
+                //console.log($scope.actions.data)
+                console.log($scope.actions)
             });
         };
 

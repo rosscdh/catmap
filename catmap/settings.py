@@ -25,8 +25,9 @@ SECRET_KEY = '9!ceu3zg_jrqqkccn+ilfd!t^kfjsk-hg#!a+ii^ue-oi$+gd8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+TEST_PREPROD = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -137,9 +138,9 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 
 BOWER_COMPONENTS_ROOT = BASE_DIR
 
-# STATICFILES_DIRS = (
-#     BOWER_COMPONENTS_ROOT,
-# )
+STATICFILES_DIRS = (
+    os.path.join(BOWER_COMPONENTS_ROOT, 'bower_components'),
+)
 
 BOWER_INSTALLED_APPS = (
     'angularjs',
@@ -229,7 +230,5 @@ try:
 except Exception as e:
     pass
 
-try:
-    from .local_settings import *
-except:
-    pass
+
+from .local_settings import *

@@ -22,6 +22,11 @@ from collections import OrderedDict
 from dateutil.rrule import rrule, MONTHLY
 
 
+cursor = connection.cursor()
+# get distinct action names
+ACTION_NAMES = OrderedDict((a.lower(), 0) for a in [action[0] for action in cursor.execute("select distinct action from eventlog_log").fetchall()])
+
+
 class DashboardInitialApiView(ReadOnlyCacheResponseAndETAGMixin, GenericAPIView):
     model = Log
 
@@ -43,22 +48,19 @@ def _yield_cat_ids(**filters):
 
 
 class DashboardApiView(ReadOnlyCacheResponseAndETAGMixin, GenericAPIView):
+
     def distinct_log_actions(self, **filters):
-        cursor = connection.cursor()
         # get a full set of month names and year in the range
         months = [dt.strftime('%B, %Y') for dt in rrule(MONTHLY, dtstart=filters.get('timestamp__gte'), until=filters.get('timestamp__lte'))]
-        # get distinct action names
-        action_names = OrderedDict((a.lower(), 0) for a in [action[0] for action in cursor.execute("select distinct action from eventlog_log").fetchall()])
-        # add the disctinct set of actions to each month
-        actions = OrderedDict((m, None) for m in months)
-        for m in months:
-            actions[m] = action_names.copy()
 
+        # add the disctinct set of actions to each month
+        actions = OrderedDict((m, ACTION_NAMES.copy()) for m in months)
+        print filters
         for l in Log.objects.filter(**filters).values('action', 'timestamp'):
             action_type = l.get('action').lower()
+            print action_type
             month = l.get('timestamp').strftime('%B, %Y')  # convert to month, year for lookup
             try:
-                current_action_count = actions[month][action_type]  # has default set above in ordered dict creation
                 actions[month][action_type] += 1 # increment the counter
             except KeyError:
                 break
