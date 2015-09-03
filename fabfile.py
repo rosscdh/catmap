@@ -432,6 +432,7 @@ def assets():
     #put('./static/*', '/home/ubuntu/apps/catmap/static/')
     #local('tar cvzf static.tar.gz ./static')
     rsync_project(local_dir='./static', remote_dir='%sstatic' % env.remote_project_path, exclude='.git')
+    rsync_project(local_dir='./static/angular-chart.js/dist/angular-chart.css.map', remote_dir='%sstatic/css/' % env.remote_project_path, exclude='.git')
 
 @task
 def requirements():

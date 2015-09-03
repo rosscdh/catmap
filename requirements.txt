@@ -21,7 +21,7 @@ jdcal==1.0
 jsmin==2.1.4
 openpyxl==2.2.5
 paramiko==1.15.2
--e git+https://github.com/rosscdh/pinax-eventlog.git@5897f4770e084881eae5f706fe4d4a0d3029e4b1#egg=pinax_eventlog-origin/feature/dateoverride
+-e git+https://github.com/rosscdh/pinax-eventlog.git@feature/dateoverride#egg=pinax_eventlog
 pycrypto==2.6.1
 python-dateutil==2.4.2
 pytz==2015.4
