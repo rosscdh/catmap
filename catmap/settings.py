@@ -55,6 +55,7 @@ HELPER_APPS = (
     'pinax.eventlog',
     'django_extensions',
     'rest_framework',
+    'import_export',
 )
 
 

@@ -44,6 +44,12 @@ app.controller("DashboardController", [
           query_data($location.search().date_from, $location.search().date_to);
         }, true);
 
+        $scope.filterByActionType = function (a,b,c) {
+console.log(a)
+console.log(b)
+console.log(c)
+        }
+
         var query_data = function (date_from, date_to) {
             DashboardService.query(date_from, date_to).then(function success (data) {
                 //$scope.data = data;
@@ -55,6 +61,7 @@ app.controller("DashboardController", [
                     'labels': ['Male', 'Female', 'Unspecified'],
                     'data': [data.gender.desexed.male, data.gender.desexed.female, data.gender.desexed.unspecified],
                 }
+                // coyp source, target
                 angular.copy(data.cats, $scope.full_cat_list)
                 angular.copy(data.cats, $scope.cat_list)
 
@@ -64,6 +71,7 @@ app.controller("DashboardController", [
                     'series': Object.keys(data.actions[Object.keys(data.actions)[0]]),
                     'data': [],
                 };
+                // convert to expected format for chart
                 angular.forEach($scope.actions.series, function(series, index) {
                     var row = [];
                     angular.forEach($scope.actions.labels, function (label, key) {
@@ -102,7 +110,7 @@ app.directive('eventLog', function() {
       events: '=events'
     },
     //template: '<ol><li ng-repeat="event in events track by $index"><em>{{ event.status }}</em><br/>{{ event.source }}, {{ event.lost_found_address }}<br/><small>{{ event.date_of | date }}</small></li></ol>'
-    template: '<div ng-repeat="event in events track by $index" class="list-group"><a href="#" class="list-group-item"><b class="list-group-item-heading">{{ event.status }}</b><p class="list-group-item-text">{{ event.source }}, {{ event.lost_found_address }}<br/><small>{{ event.date_of | date }}</small></p></a></div>'
+    template: '<div ng-repeat="event in events track by $index" class="list-group"><a href="#" class="list-group-item"><b class="list-group-item-heading">{{ event.status }}</b><p class="list-group-item-text">{{ event.source }}, {{ event.lost_found_address }}<span ng-show="event.return_reason"><br/>{{ event.return_reason }}</span><br/><small>{{ event.date_of | date }}</small></p></a></div>'
   };
 });
 

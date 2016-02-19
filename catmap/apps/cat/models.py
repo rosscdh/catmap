@@ -42,17 +42,24 @@ class Cat(models.Model):
         return self.CAT_GENDER.get_desc_by_value(self.sex)
 
     @property
+    def is_kitten(self):
+        return self.age < 1
+
+    @property
     def age(self):
         today = date.today()
-        try:
-            birthday = self.dob.replace(year=today.year)
-        except ValueError:
-            # raised when birth date is February 29 and the current year is not a leap year
-            birthday = self.dob.replace(year=today.year, month=self.dob.month + 1, day=1)
-        if birthday > today:
-            return today.year - self.dob.year - 1
+        if self.dob in [None]:
+            return 100
         else:
-            return today.year - self.dob.year
+            try:
+                birthday = self.dob.replace(year=today.year)
+            except ValueError:
+                # raised when birth date is February 29 and the current year is not a leap year
+                birthday = self.dob.replace(year=today.year, month=self.dob.month + 1, day=1)
+            if birthday > today:
+                return today.year - self.dob.year - 1
+            else:
+                return today.year - self.dob.year
 
     @property
     def events(self):

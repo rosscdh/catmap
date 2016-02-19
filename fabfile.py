@@ -1,7 +1,6 @@
 from __future__ import with_statement
 from fabric.api import *
 from fabric.contrib import files
-from fabric.contrib.project import rsync_project
 #from fab_deploy import crontab
 
 from git import *
@@ -429,10 +428,11 @@ def assets():
     local('rm -Rf ./static')
     # collect static components
     local('python ./manage.py collectstatic --noinput')
-    #put('./static/*', '/home/ubuntu/apps/catmap/static/')
-    #local('tar cvzf static.tar.gz ./static')
-    rsync_project(local_dir='./static', remote_dir='%sstatic' % env.remote_project_path, exclude='.git')
-    rsync_project(local_dir='./static/angular-chart.js/dist/angular-chart.css.map', remote_dir='%sstatic/css/' % env.remote_project_path, exclude='.git')
+    local('tar cvzf static.tar.gz ./static')
+    put('static.tar.gz', env.remote_project_path)
+    run('tar -zxvf %sstatic.tar.gz -C %s' % (env.remote_project_path, env.remote_project_path))
+    run('rm %sstatic.tar.gz' % env.remote_project_path)
+    local('rm static.tar.gz')
 
 @task
 def requirements():

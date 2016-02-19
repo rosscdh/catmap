@@ -9,7 +9,7 @@ from catmap.apps.cat.models import Cat
 
 from pinax.eventlog.models import log
 
-# import openpyxl
+import datetime
 import csv
 
 
@@ -78,7 +78,7 @@ class Command(BaseCommand):
                 log(user=self.user,
                     action=status.lower(),
                     obj=cat,
-                    dateof=parse(date_in) if date_in else None,
+                    dateof=parse(date_in) if date_in else datetime.datetime.utcnow(),
                     extra={'physical_location': physical_location,
                            'shelter_loc': shelter_loc,
                            'animal_name': animal_name,
