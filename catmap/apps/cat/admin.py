@@ -84,7 +84,7 @@ class EventListFilter(admin.SimpleListFilter):
         if event:
             affected_pks = Log.objects.filter(extra__icontains={'status': event}).values_list('object_id', flat=True).distinct()
             if affected_pks:
-                return queryset.filter(pk__in=affected_pks)
+                return queryset.filter(pk__in=affected_pks) | queryset.filter(current_status=event)
         else:
             return queryset
 
