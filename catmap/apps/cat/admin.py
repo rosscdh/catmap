@@ -103,18 +103,22 @@ class EventDateFilter(DateRangeFilter):
             # get no null params
             filter_params = clean_input_prefix(dict(filter(lambda x: bool(x[1]), self.form.cleaned_data.items())))
 
-            filter_params['timestamp__lte'] = filter_params.pop('fake_date_event__lte')
-            filter_params['timestamp__gte'] = filter_params.pop('fake_date_event__gte')
+            filter_params['timestamp__lte'] = filter_params.pop('fake_date_event__lte', None)
+            filter_params['timestamp__gte'] = filter_params.pop('fake_date_event__gte', None)
 
-            # filter by upto included
-            lookup_upto = self.lookup_kwarg_upto.lstrip(FILTER_PREFIX)
-            if filter_params.get(lookup_upto) is not None:
-                lookup_kwarg_upto_value = filter_params.pop(lookup_upto)
-                filter_params['timestamp__lt'] = lookup_kwarg_upto_value + datetime.timedelta(days=1)
+            if filter_params['timestamp__lte'] is None:
+                filter_params.pop('timestamp__lte', None)
+            if filter_params['timestamp__gte'] is None:
+                filter_params.pop('timestamp__gte', None)
+            if filter_params:
+                # filter by upto included
+                # lookup_upto = self.lookup_kwarg_upto.lstrip(FILTER_PREFIX)
+                # if filter_params.get(lookup_upto) is not None:
+                #     lookup_kwarg_upto_value = filter_params.pop(lookup_upto)
+                #     filter_params['timestamp__lt'] = lookup_kwarg_upto_value + datetime.timedelta(days=1)
+                affected_pks = Log.objects.filter(**filter_params).values_list('object_id', flat=True).distinct()
 
-            affected_pks = Log.objects.filter(**filter_params).values_list('object_id', flat=True).distinct()
-
-            return queryset.filter(pk__in=affected_pks)
+                return queryset.filter(pk__in=affected_pks)
         else:
             return queryset
 

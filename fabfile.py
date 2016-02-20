@@ -124,7 +124,7 @@ def virtualenv(cmd, **kwargs):
 
 @task
 def pip_install():
-    virtualenv(cmd='pip install virtualenv virtualenvwrapper')
+    virtualenv(cmd='pip install virtualenv daterange_filter')
 
 
 @task
