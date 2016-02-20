@@ -32,6 +32,8 @@ class Cat(models.Model):
     animal_notes = models.CharField(max_length=255, null=True, blank=True)
     date_adopted = models.DateField(null=True, blank=True)
 
+    fake_date_event = models.DateField(null=True, blank=True, editable=False)
+
     current_status = models.CharField(max_length=128, null=True, blank=True)
     owner = models.ForeignKey('auth.User', null=True, blank=True)
 

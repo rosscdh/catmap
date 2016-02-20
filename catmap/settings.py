@@ -56,6 +56,7 @@ HELPER_APPS = (
     'django_extensions',
     'rest_framework',
     'import_export',
+    'daterange_filter',
 )
 
 
