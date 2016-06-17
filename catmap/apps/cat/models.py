@@ -70,4 +70,14 @@ class Cat(models.Model):
                           .order_by('timestamp')
 
     def __unicode__(self):
-        return '%s - (%s)' % (self.name, self.sex)
+        return '%s' % (self.name,)
+
+
+#
+# Black magic
+#
+
+def get_log_cat(self, **kwargs):
+    return Cat.objects.get(pk=self.object_id) if self.object_id else None
+
+Log.add_to_class('get_cat', get_log_cat)

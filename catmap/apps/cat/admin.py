@@ -133,6 +133,7 @@ class CatAdmin(ImportExportModelAdmin):
     resource_class = CatResource
 
     list_display = ('__unicode__',
+                    'gender',
                     'microchip_id',
                     'receipt_id',
                     'adopted_from',

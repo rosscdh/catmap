@@ -39,6 +39,7 @@ DJANGO_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 )
 
 APPLICATION_APPS = (
@@ -57,6 +58,7 @@ HELPER_APPS = (
     'rest_framework',
     'import_export',
     'daterange_filter',
+    'haystack',
 )
 
 

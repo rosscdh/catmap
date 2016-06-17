@@ -8,36 +8,60 @@ from ..models import Cat
 
 class EventSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
-    source = serializers.SerializerMethodField()
-    lost_found_address = serializers.SerializerMethodField()
-    return_reason = serializers.SerializerMethodField()
+    animal_id = serializers.SerializerMethodField()
+    adopter_id = serializers.SerializerMethodField()
+    age_category_at_adoption = serializers.SerializerMethodField()
+    jurisdiction = serializers.SerializerMethodField()
+    suburb_state_post = serializers.SerializerMethodField()
+    outgoing_adoption_date = serializers.SerializerMethodField()
+    sex = serializers.SerializerMethodField()
+    animal_name = serializers.SerializerMethodField()
+    microchip = serializers.SerializerMethodField()
     date_of = serializers.DateTimeField(source='timestamp')
 
     class Meta:
         model = Log
         fields = ('status',
-                  'source',
-                  'lost_found_address',
-                  'return_reason',
-                  'date_of')
+                  'animal_id',
+                  'adopter_id',
+                  'age_category_at_adoption',
+                  'jurisdiction',
+                  'suburb_state_post',
+                  'outgoing_adoption_date',
+                  'sex',
+                  'animal_name',
+                  'microchip',
+                  'date_of',)
 
     def get_status(self, obj):
-        if obj.extra.get('sub_status', None) not in ['', None]:
-            return '%s %s' % (obj.extra.get('status'), obj.extra.get('sub_status'))
-        return obj.extra.get('status')
+        return obj.extra.get('status', None)
 
-    def get_source(self, obj):
-        return obj.extra.get('source', None)
+    def get_animal_id(self, obj):
+        return obj.extra.get('animal_id', None)
 
-    def get_lost_found_address(self, obj):
-        return obj.extra.get('lost_found_address', None)
+    def get_adopter_id(self, obj):
+        return obj.extra.get('adopter_id', None)
 
-    def get_return_reason(self, obj):
-        reason = obj.extra.get('return_reason', None)
-        other_reason = obj.extra.get('other_reason', None)
-        if other_reason is not None:
-            reason = '%s (%s)' % (reason, other_reason)
-        return reason
+    def get_age_category_at_adoption(self, obj):
+        return obj.extra.get('age_category_at_adoption', None)
+
+    def get_jurisdiction(self, obj):
+        return obj.extra.get('jurisdiction', None)
+
+    def get_suburb_state_post(self, obj):
+        return obj.extra.get('suburb_state_post', None)
+
+    def get_outgoing_adoption_date(self, obj):
+        return obj.extra.get('outgoing_adoption_date', None)
+
+    def get_sex(self, obj):
+        return obj.extra.get('sex', None)
+
+    def get_animal_name(self, obj):
+        return obj.extra.get('animal_name', None)
+
+    def get_microchip(self, obj):
+        return obj.extra.get('microchip', None)
 
 
 class CatSerializer(serializers.ModelSerializer):
