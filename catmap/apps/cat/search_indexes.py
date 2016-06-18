@@ -79,6 +79,13 @@ class LogIndex(indexes.SearchIndex, indexes.Indexable):
         return obj.extra.get('surrender_source', None)
 
     def prepare_sex(self, obj):
+        sex = obj.extra.get('sex', None)
+
+        if sex.lower() in ['unkonwn']:
+            # sometimes they dont bother with entering the gender when updating a cat log 
+            # thus we have to get the log related cat object which usually does have the gender right
+            sex = obj.obj.gender
+
         return obj.extra.get('sex', None)
 
     def prepare_animal_name(self, obj):

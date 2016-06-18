@@ -1,0 +1,2 @@
+[web]
+web1 ansible_ssh_host=128.199.250.168 ansible_ssh_user=root
